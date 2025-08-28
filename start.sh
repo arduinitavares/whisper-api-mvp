@@ -177,7 +177,7 @@ start_service() {
     nohup "${PY_BIN:-python3}" -m uvicorn app.main:app \
     --host 0.0.0.0 \
     --port "${PORT}" \
-    --log-level info \
+    --log-level "${LOG_LEVEL:-info}" \
     --access-log \
     --no-use-colors \
     --loop asyncio \
@@ -258,7 +258,21 @@ show_status() {
 # --- Main Logic --------------------------------------------------------------
 
 # Trap signals for cleanup. Does NOT trap EXIT on 'start' to allow backgrounding.
-trap stop_service INT TERM
+# Ensure correct .env is in place (only when ENVIRONMENT is explicitly set)
+if [[ -n "${ENVIRONMENT:-}" ]]; then
+  ENV_FILE=".env.${ENVIRONMENT}"
+  if [[ -f "$SCRIPT_DIR/$ENV_FILE" ]]; then
+    cp "$SCRIPT_DIR/$ENV_FILE" "$SCRIPT_DIR/.env"
+    info "Using environment: ${ENVIRONMENT} (copied ${ENV_FILE} to .env)"
+  else
+    error "Requested ENVIRONMENT='${ENVIRONMENT}' but ${ENV_FILE} not found."
+    exit 1
+  fi
+else
+  # No ENVIRONMENT provided → keep existing .env without warnings
+  [[ -f "$SCRIPT_DIR/.env" ]] && info "Using existing .env (no ENVIRONMENT set)"
+fi
+
 
 load_port_from_env
 
