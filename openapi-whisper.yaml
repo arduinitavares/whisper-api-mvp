@@ -1,0 +1,137 @@
+openapi: 3.0.3
+info:
+  title: Whisper Transcription Pro API
+  description: >
+    High-accuracy, multi-language audio transcription powered by OpenAI's Whisper.
+    This API accepts an audio file and returns transcribed text plus useful metadata.
+  version: 1.0.0
+servers:
+  - url: https://YOUR_BACKEND_BASE_URL
+    description: Replace with your production base URL (no trailing slash). RapidAPI Studio will proxy to this.
+tags:
+  - name: Transcription
+    description: Endpoints for audio to text.
+paths:
+  /v1/transcribe:
+    post:
+      tags: [Transcription]
+      summary: Transcribe an audio file
+      description: |
+        Upload an audio file and receive its transcription.
+        The RapidAPI gateway will handle consumer authentication and will forward
+        the request to your backend, which should validate the `X-RapidAPI-Proxy-Secret`.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The audio file to transcribe.
+                language:
+                  type: string
+                  description: Optional ISO-639-1 language code (e.g., "en", "nl").
+                  example: en
+            encoding:
+              file:
+                contentType: audio/*, application/octet-stream
+      responses:
+        '200':
+          description: Successful transcription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranscriptionResponse'
+              examples:
+                example1:
+                  summary: Simple response
+                  value:
+                    text: "Hello world from Whisper"
+                    language: "en"
+                    duration_seconds: 3.42
+        '400':
+          description: Validation error (e.g., missing file)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                badRequest:
+                  value:
+                    message: "Validation Error"
+                    details:
+                      - loc: ["body", "file"]
+                        msg: "field required"
+                        type: "value_error.missing"
+        '403':
+          description: Forbidden (RapidAPI proxy headers missing or invalid)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  value:
+                    message: "Forbidden"
+                    details: []
+        '413':
+          description: Payload too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '415':
+          description: Unsupported media type/extension
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests / rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    TranscriptionResponse:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The transcribed text.
+        language:
+          type: string
+          description: ISO-639-1 language code.
+        duration_seconds:
+          type: number
+          format: float
+          description: Approximate audio duration in seconds.
+      required: [text]
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items: { type: string }
+              msg:
+                type: string
+              type:
+                type: string
+      required: [message]
