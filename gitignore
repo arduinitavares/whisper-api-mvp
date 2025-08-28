@@ -1,0 +1,47 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+
+# --- Virtual environments ---
+.venv/
+venv/
+
+# --- Environment files ---
+.env
+.env.*
+!.env.example  # keep example env file
+
+# --- Python tooling ---
+.python-version
+coverage.xml
+htmlcov/
+.pytest_cache/
+.coverage
+*.cover
+*.log
+
+# --- macOS ---
+.DS_Store
+
+# --- Logs ---
+logs/
+
+# --- IDE / Editor ---
+*.code-workspace
+.vscode/
+.idea/
+
+# --- Node.js (ecosystem.config.js suggests pm2) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Notebooks ---
+notebooks/.ipynb_checkpoints/
+
+# --- OS / Misc ---
+*.plist

@@ -1,0 +1,35 @@
+[run]
+source = app
+branch = true
+parallel = true
+omit =
+    */tests/*
+    */test_*
+    */__init__.py
+    */conftest.py
+    */venv/*
+    */build/*
+    */dist/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    if self.debug:
+    if settings.DEBUG
+    raise AssertionError
+    raise NotImplementedError
+    if 0:
+    if __name__ == .__main__.:
+    class .*\bProtocol\):
+    @(abc\.)?abstractmethod
+show_missing = true
+skip_covered = false
+precision = 2
+
+[html]
+directory = htmlcov
+title = Whisper API Test Coverage
+
+[xml]
+output = coverage.xml

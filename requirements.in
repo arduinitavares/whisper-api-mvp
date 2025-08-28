@@ -1,0 +1,33 @@
+# Web framework and server
+fastapi
+uvicorn[standard]
+python-multipart
+
+# MLX and ML dependencies
+mlx
+mlx-whisper
+
+# System monitoring and utilities
+psutil
+pydantic
+pydantic-settings
+
+# Development and testing
+pytest
+pytest-asyncio
+pytest-cov
+httpx
+requests
+
+# Logging and debugging
+icecream
+
+# Audio processing (optional, for format conversion)
+pydub
+
+# Security and validation
+python-jose[cryptography]
+passlib[bcrypt]
+
+# Performance monitoring (optional)
+prometheus-client
