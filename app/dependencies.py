@@ -3,11 +3,12 @@
 
 from __future__ import annotations
 
-import os
 from typing import Optional
 
 from fastapi import Header, HTTPException, status
 from pydantic import BaseModel
+
+from app.config import Settings
 
 
 class UserContext(BaseModel):
@@ -27,11 +28,10 @@ async def get_user_context(
 
     Validates the proxy secret and returns user information.
     """
-    # Get the expected secret from environment
-    expected_secret = os.getenv("RAPIDAPI_PROXY_SECRET")
+    settings = Settings()
 
     # Check if authentication is required
-    if expected_secret is not None:
+    if settings.auth_enabled:
         # Validate proxy secret
         if not x_rapidapi_proxy_secret:
             raise HTTPException(
@@ -39,13 +39,13 @@ async def get_user_context(
                 detail="Missing RapidAPI proxy secret",
             )
 
-        if x_rapidapi_proxy_secret != expected_secret:
+        if x_rapidapi_proxy_secret != settings.RAPIDAPI_PROXY_SECRET:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Invalid RapidAPI proxy secret",
             )
 
-        # Validate user header
+        # Validate user header when auth is enabled
         if not x_rapidapi_user:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -64,17 +64,14 @@ async def verify_api_key_optional(
     x_rapidapi_user: Optional[str] = Header(None),
 ) -> dict:
     """
-    Simple auth check for RapidAPI (backwards compatibility).
+    Simple auth check for RapidAPI.
 
     For MVP: Just checks if secret matches when provided.
     """
-    # Import settings locally to avoid circular import
-    from app.config import Settings
-
     settings = Settings()
 
     # If auth is disabled, allow everything
-    if not settings.REQUIRE_AUTH:
+    if not settings.auth_enabled:
         return {"user": x_rapidapi_user or "anonymous", "authenticated": False}
 
     # If auth is required, check the secret
