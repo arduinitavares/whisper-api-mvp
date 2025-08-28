@@ -45,3 +45,21 @@ notebooks/.ipynb_checkpoints/
 
 # --- OS / Misc ---
 *.plist
+
+# --- Audio files (ignore all audio in repo) ---
+*.wav
+*.mp3
+*.flac
+*.m4a
+*.ogg
+*.aac
+*.wma
+*.aiff
+*.aif
+*.au
+
+# If you only want to ignore audio under app/, use:
+# app/**/*.wav
+# app/**/*.mp3
+# app/**/*.flac
+# etc.
