@@ -58,6 +58,9 @@ notebooks/.ipynb_checkpoints/
 *.aif
 *.au
 
+.env
+.env.production
+.env.testing
 # If you only want to ignore audio under app/, use:
 # app/**/*.wav
 # app/**/*.mp3
