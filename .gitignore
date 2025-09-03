@@ -66,3 +66,5 @@ notebooks/.ipynb_checkpoints/
 # app/**/*.mp3
 # app/**/*.flac
 # etc.
+# Test datasets
+/tests/data/LJSpeech-1.1/
